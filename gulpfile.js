@@ -38,18 +38,29 @@ const resourcesMetaXML = `<?xml version="1.0" encoding="UTF-8"?>
     <contentType>application/x-zip-compressed</contentType>
 </StaticResource>`;
 
-// Task to remove package_to_deploy folder 
-gulp.task('rm', function () { del(['./package_to_deploy']) });
+const packageXML = `<?xml version="1.0" encoding="UTF-8"?>
+<Package xmlns="http://soap.sforce.com/2006/04/metadata">
+    <types>
+        <members>*</members>
+        <name>ApexPage</name>
+    </types>
+    <types>
+        <members>*</members>
+        <name>StaticResource</name>
+    </types>
+    <version>${apiVersion}</version>
+</Package>`;
 
-gulp.task('package', function () {
-  gulp.src('./package/package.xml')
-    .pipe(rename(function(path) {
-      path.dirname += "/";
-    }))
-    .pipe(gulp.dest('package_to_deploy/'));
+// Task to remove package folder 
+gulp.task('rm', function () { del(['./package']) });
+
+gulp.task('create-package', function () {
+  gulp.src('./package')
+  .pipe(file(`package.xml`, packageXML))
+    .pipe(gulp.dest('package/'));
 });
 
-gulp.task('pages-prod', function () {
+gulp.task('page_to_prod', function () {
   gulp.src(['dist/index.html'])
     .pipe(replace('<!doctype html>', ''))
     .pipe(replace('<html lang="en">', `<apex:page ${otherPageAttrs} ${controller} ${extensions}>`))
@@ -69,9 +80,9 @@ gulp.task('pages-prod', function () {
       path.extname = ".page"
     }))
     .pipe(file(`pages/${pageName}.page-meta.xml`, pageMetaXML))
-    .pipe(gulp.dest('package_to_deploy/'));
+    .pipe(gulp.dest('package/'));
 });
-gulp.task('pages-dev', function () {
+gulp.task('page_to_dev', function () {
   gulp.src(['dist/index.html'])
     .pipe(replace('<!doctype html>', ''))
     .pipe(replace('<html lang="en">', `<apex:page ${otherPageAttrs} ${controller} ${extensions}>`))
@@ -91,23 +102,23 @@ gulp.task('pages-dev', function () {
       path.extname = ".page"
     }))
     .pipe(file(`pages/${pageName}.page-meta.xml`, pageMetaXML))
-    .pipe(gulp.dest('package_to_deploy/'));
+    .pipe(gulp.dest('package/'));
 });
 
 gulp.task('staticresources', function () {
   gulp.src('./dist/**')
     .pipe(zip(`${resources}.resource`))
     .pipe(file(`${resources}.resource-meta.xml`, resourcesMetaXML))
-    .pipe(gulp.dest('package_to_deploy/staticresources/'));
+    .pipe(gulp.dest('package/staticresources/'));
 });
 
-gulp.task('build-static', ['package', 'staticresources'])
-gulp.task('build-package', ['package', 'pages-prod', 'staticresources'])
-gulp.task('build-dev-package', ['package', 'pages-dev'])
+gulp.task('build-static', ['create-package', 'staticresources'])
+gulp.task('build-package', ['create-package', 'page_to_prod', 'staticresources'])
+gulp.task('build-dev-package', ['create-package', 'page_to_dev'])
 
 gulp.task('deploy', function () {
-  gulp.src('./package_to_deploy/**', { base: "." })
-    .pipe(zip('package_to_deploy.zip'))
+  gulp.src('./package/**', { base: "." })
+    .pipe(zip('package.zip'))
     .pipe(forceDeploy({
       username: process.env.SF_USERNAME,
       password: process.env.SF_PASSWORD,
