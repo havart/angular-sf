@@ -62,11 +62,11 @@ export class HomeComponent{
  constructor(
    private sfService: SalesforceService
  ) {
-this.sfService.callRemote('SomeController.RemouteActionMethod',
-     [JSON.stringify(param_1),JSON.stringify(param_N)], this.successCallback, this.failedCallback);
-}
-private successCallback = (response) => console.log(response)
-private failedCallback = (response) => console.log(response)
+  this.sfService.callRemote('SomeController.RemouteActionMethod',
+      [JSON.stringify(param_1),JSON.stringify(param_N)], this.successCallback, this.failedCallback);
+  }
+  private successCallback = (response) => console.log(response)
+  private failedCallback = (response) => console.log(response)
 }
 ```
 8. Use command `npm run dev` to dev mode. 
