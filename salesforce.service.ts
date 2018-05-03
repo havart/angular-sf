@@ -17,10 +17,7 @@ export class SalesforceService {
         try {
           result = JSON.parse(result);
         } catch (error) {
-          reject({
-            type: 'danger',
-            message: error
-          });
+          reject(error);
         }
         if (event.status) {
           if (result.type === 'success') {
