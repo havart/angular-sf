@@ -20,11 +20,7 @@ export class SalesforceService {
           reject(error);
         }
         if (event.status) {
-          if (result.type === 'success') {
             resolve(result);
-          } else {
-            reject(result);
-          }
         } else {
           reject(result);
         }
