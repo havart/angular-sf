@@ -7,8 +7,6 @@ declare class Visualforce {
 @Injectable()
 export class SalesforceService {
 
-  constructor() { }
-
   public getSFResourse = (path: string) => `${window['_VfResourses']}/${path}`;
 
   public callRemote(methodName: string, params: string[], resolve, reject, config?: any) {
