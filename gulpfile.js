@@ -14,6 +14,7 @@ const apiVersion = process.env.API_VERSION;
 const resources = process.env.RESOURCE_NAME;
 const baseHref = process.env.BASE_HREF;
 const devResources = process.env.DEV_RESOURCES_URL;
+const distPath = process.env.DIST_PATH || 'dist';
 
 let controller = process.env.CONTROLLER;
 controller = controller ? `controller="${controller}"` : ``;
@@ -54,15 +55,14 @@ const packageXML = `<?xml version="1.0" encoding="UTF-8"?>
 // Task to remove package folder 
 gulp.task('rm', function () { del(['./package']) });
 
-// Task to create package.xml 
 gulp.task('create-package', function () {
   gulp.src('./package')
   .pipe(file(`package.xml`, packageXML))
     .pipe(gulp.dest('package/'));
 });
-// Task to create apex.page to production
+
 gulp.task('page_to_prod', function () {
-  gulp.src(['dist/index.html'])
+  gulp.src([distPath+'/index.html'])
     .pipe(replace('<!doctype html>', ''))
     .pipe(replace('<html lang="en">', `<apex:page ${otherPageAttrs} ${controller} ${extensions}>`))
     .pipe(replace(`<base href="${baseHref}">`, `<base href="${baseHref}"/>`))
@@ -83,10 +83,8 @@ gulp.task('page_to_prod', function () {
     .pipe(file(`pages/${pageName}.page-meta.xml`, pageMetaXML))
     .pipe(gulp.dest('package/'));
 });
-
-// Task to create apex.page to develop mode
 gulp.task('page_to_dev', function () {
-  gulp.src(['dist/index.html'])
+  gulp.src([distPath+'/index.html'])
     .pipe(replace('<!doctype html>', ''))
     .pipe(replace('<html lang="en">', `<apex:page ${otherPageAttrs} ${controller} ${extensions}>`))
     .pipe(replace(`<base href="${baseHref}">`, `<base href="${baseHref}"/>`))
@@ -107,18 +105,16 @@ gulp.task('page_to_dev', function () {
     .pipe(file(`pages/${pageName}.page-meta.xml`, pageMetaXML))
     .pipe(gulp.dest('package/'));
 });
-// Task to create a static reasources
+
 gulp.task('staticresources', function () {
-  gulp.src('./dist/**')
+  gulp.src('./'+distPath+'/**')
     .pipe(zip(`${resources}.resource`))
     .pipe(file(`${resources}.resource-meta.xml`, resourcesMetaXML))
     .pipe(gulp.dest('package/staticresources/'));
 });
-// Task for build package only with static recources
+
 gulp.task('build-static', ['create-package', 'staticresources'])
-// Task for build package to production mode
 gulp.task('build-package', ['create-package', 'page_to_prod', 'staticresources'])
-// Task for build package to dev mode
 gulp.task('build-dev-package', ['create-package', 'page_to_dev'])
 
 gulp.task('deploy', function () {
