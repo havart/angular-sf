@@ -7,7 +7,7 @@ declare class Visualforce {
 @Injectable()
 export class SalesforceService {
 
-  public getSFResourse = (path: string) => `${window['_VfResourses']}/${path}`;
+  public getSFResource = (path: string) => `${window['_VfResources']}/${path}`;
 
   public callRemote(methodName: string, params: string[], resolve, reject, config?: any) {
     Visualforce.remoting.Manager.invokeAction(

@@ -72,7 +72,7 @@ gulp.task('page_to_prod', function () {
     .pipe(replace(`<script type="text/javascript" src="`, `<script type="text/javascript" src="{!URLFOR($Resource.${resources}, '`))
     .pipe(replace(`.js"></script>`, `.js')}"></script>`))
     .pipe(replace('</body>', `<script type="text/javascript">
-    window._VfResourses = '{!URLFOR($Resource.${resources})}';
+    window._VfResources = '{!URLFOR($Resource.${resources})}';
     </script></body>`))
     .pipe(replace('</html>', `</apex:page>`))
     .pipe(rename(function (path) {
@@ -93,7 +93,7 @@ gulp.task('page_to_dev', function () {
     .pipe(replace('href="favicon.ico">', `href="${devResources}/favicon.ico"/>`))
     .pipe(replace(`<script type="text/javascript" src="`, `<script type="text/javascript" src="${devResources}/`))
     .pipe(replace('</body>', `<script type="text/javascript">
-    window._VfResourses = '${devResources}';
+    window._VfResources = '${devResources}';
     </script>
     </body>`))
     .pipe(replace('</html>', `</apex:page>`))
