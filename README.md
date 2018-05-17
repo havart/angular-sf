@@ -1,6 +1,14 @@
 # angular-sf
 Angular SF Project
 
+```
+Important!
+Latest changes:
+Now, Angular CLI by default builds the project to folder "dist/project_name".
+So I added the new variable *DIST_PATH* to .env file. The default value of *DIST_PATH* is *dist*.
+If you use "@angular/cli": "~1.7.3", you should define this path some like this "dist/project_name"
+```
+
 ## How use it:
 1. Copy gulpfile.js file to the root folder of your project
 2. Copy salesforce.service.ts file to the folder services of your Angular project
